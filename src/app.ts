@@ -10,6 +10,7 @@ const {
   SNOWFLAKE_ACCOUNT,
   SNOWFLAKE_USERNAME,
   SNOWFLAKE_PASSWORD,
+  SNOWFLAKE_PRIVATE_KEY,
   CONFIG_YAML_PATH,
 } = process.env;
 
@@ -17,8 +18,8 @@ if (!SNOWFLAKE_ACCOUNT)
   throw new Error("Missing environment variable SNOWFLAKE_ACCOUNT");
 if (!SNOWFLAKE_USERNAME)
   throw new Error("Missing environment variable SNOWFLAKE_USERNAME");
-if (!SNOWFLAKE_PASSWORD)
-  throw new Error("Missing environment variable SNOWFLAKE_PASSWORD");
+if (!SNOWFLAKE_PASSWORD && !SNOWFLAKE_PRIVATE_KEY)
+  throw new Error("Missing environment variable SNOWFLAKE_PASSWORD or SNOWFLAKE_PRIVATE_KEY");
 if (!CONFIG_YAML_PATH)
   throw new Error("Missing environment variable CONFIG_YAML_PATH");
 if (!fs.existsSync(CONFIG_YAML_PATH))
@@ -43,11 +44,12 @@ app.get("/metrics", (req, res) => {
 });
 
 (async () => {
-  const service = snowflakeService(
-    SNOWFLAKE_ACCOUNT,
-    SNOWFLAKE_USERNAME,
-    SNOWFLAKE_PASSWORD
-  );
+  const service = snowflakeService({
+    account: SNOWFLAKE_ACCOUNT,
+    username: SNOWFLAKE_USERNAME,
+    ...(SNOWFLAKE_PASSWORD && { password: SNOWFLAKE_PASSWORD }),
+    ...(SNOWFLAKE_PRIVATE_KEY && { privateKey: SNOWFLAKE_PRIVATE_KEY }),
+  });
 
   app.listen(port, () => {
     console.log(`Snowflake exporter listening at http://localhost:${port}`);
