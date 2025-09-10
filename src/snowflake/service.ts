@@ -1,8 +1,8 @@
 import * as snowflake from 'snowflake-sdk'
 
-export const snowflakeService = (account: string, username: string, password: string) => {
+export const snowflakeService = (connectionOptions: snowflake.ConnectionOptions) => {
   snowflake.configure({ ocspFailOpen: false });
-  var connection = snowflake.createConnection({ account, username, password });
+  var connection = snowflake.createConnection(connectionOptions);
 
   const connect = () => {
     return new Promise<void>((resolve, reject) => {
