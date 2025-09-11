@@ -3,6 +3,7 @@ import YAML from "yaml";
 import { snowflakeService } from "./snowflake/service";
 import fs from "fs";
 import { parseMetrics } from "./config";
+import AuthenticationTypes from 'snowflake-sdk/dist/lib/authentication/authentication_types';
 
 console.log("Starting Snowflake Prometheus exporter...");
 
@@ -48,7 +49,7 @@ app.get("/metrics", (req, res) => {
     account: SNOWFLAKE_ACCOUNT,
     username: SNOWFLAKE_USERNAME,
     ...(SNOWFLAKE_PASSWORD && { password: SNOWFLAKE_PASSWORD }),
-    ...(SNOWFLAKE_PRIVATE_KEY && { privateKey: SNOWFLAKE_PRIVATE_KEY }),
+    ...(SNOWFLAKE_PRIVATE_KEY && { privateKey: SNOWFLAKE_PRIVATE_KEY, authenticator: AuthenticationTypes.KEY_PAIR_AUTHENTICATOR }),
   });
 
   app.listen(port, () => {
