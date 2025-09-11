@@ -1,2 +1,3 @@
 node_modules/
 build/
+snowflake_exporter_config.yml
